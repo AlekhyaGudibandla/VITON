@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+.pyo
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Build
+.next/
+dist/
+build/
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python
+venv/
+.venv/
+*.pt
+*.pth
+*.onnx
+
+# Model weights
+ai-service/weights/
+ai-service/checkpoints/
+
+# Uploads (local dev)
+storage/uploads/
+storage/results/
+
+# Logs
+*.log
