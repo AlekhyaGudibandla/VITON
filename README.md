@@ -1,16 +1,31 @@
 # AI-Powered Virtual Try-On System
 
-> Try on clothes virtually using AI. Upload your photo, choose an outfit, and see how it looks on you before buying.
+> A full-stack, microservices-based AI system for virtual clothing try-on.
+> Upload a photo, select a garment, and generate a realistic try-on using a multi-stage computer vision pipeline.
 
 ![VirtualFit](https://img.shields.io/badge/VirtualFit-AI%20Fashion-7c3aed?style=for-the-badge)
-![Next.js](https://img.shields.io/badge/Next.js-14-black?style=flat-square&logo=next.js)
-![Express](https://img.shields.io/badge/Express-4.x-green?style=flat-square&logo=express)
-![Python](https://img.shields.io/badge/Python-3.10+-blue?style=flat-square&logo=python)
-![Supabase](https://img.shields.io/badge/Supabase-Auth%20%7C%20DB%20%7C%20Storage-3ECF8E?style=flat-square&logo=supabase)
+![Next.js](https://img.shields.io/badge/Next.js-14-black?style=flat-square\&logo=next.js)
+![Express](https://img.shields.io/badge/Express-4.x-green?style=flat-square\&logo=express)
+![Python](https://img.shields.io/badge/Python-3.10+-blue?style=flat-square\&logo=python)
+![Supabase](https://img.shields.io/badge/Supabase-Auth%20%7C%20DB%20%7C%20Storage-3ECF8E?style=flat-square\&logo=supabase)
 
-## Architecture
+---
 
-```
+## 🚀 Overview
+
+This project implements an **end-to-end virtual try-on system** combining:
+
+* Modern full-stack architecture
+* A modular AI inference pipeline
+* Cloud-based storage and authentication
+
+The system is designed to be **extensible, modular, and production-oriented**, with clear separation between frontend, API, and ML inference services.
+
+---
+
+## 🏗️ Architecture
+
+```text
 ┌──────────────────┐    ┌──────────────────┐    ┌──────────────────┐
 │   Next.js 14     │    │   Express.js     │    │   Python Flask   │
 │   Frontend       │───▶│   Backend API    │───▶│   AI Service     │
@@ -25,134 +40,216 @@
 └──────────────────────────────────────────┘
 ```
 
-## AI Pipeline
+### Key Design Decisions
 
-```
+* **Service separation**
+
+  * Frontend (UI)
+  * Backend (API orchestration)
+  * AI service (compute-heavy inference)
+
+* **Language specialization**
+
+  * Node.js → API handling & integrations
+  * Python → ML inference pipeline
+
+* **Externalized state**
+
+  * Supabase handles auth, DB, and storage
+
+---
+
+## 🤖 AI Pipeline
+
+```text
 User Photo ─┐
              ├──▶ Pose Detection ──▶ Human Parsing ──┐
 Clothing ────┤                                        ├──▶ Image Synthesis ──▶ Result
              └──▶ Clothing Mask ──▶ TPS Warping ─────┘
 ```
 
-## Quick Start
+### Pipeline Stages
+
+1. Pose Detection
+2. Human Parsing
+3. Clothing Mask Extraction
+4. TPS Warping
+5. Image Synthesis
+
+### Engineering Notes
+
+* Modular pipeline (`models/`, `utils/`, `inference.py`)
+* Supports:
+
+  * **Mock mode (CPU)** → fast development
+  * **Full mode (GPU-ready)** → realistic inference
+
+---
+
+## ⚙️ System Design Considerations
+
+### Current Design
+
+* Synchronous request-response pipeline
+* Stateless backend API
+* External storage (Supabase)
+
+### Scalability Considerations
+
+* Async job queue (Redis / workers)
+* Request batching for GPU efficiency
+* Caching repeated results
+* Horizontal scaling of AI service
+
+### Tradeoffs
+
+| Decision              | Benefit              | Tradeoff            |
+| --------------------- | -------------------- | ------------------- |
+| Separate AI service   | Isolation of compute | Network latency     |
+| Supabase              | Faster development   | Less infra control  |
+| Synchronous inference | Simplicity           | Limited scalability |
+
+---
+
+## 📊 Observability
+
+Currently supports:
+
+* API-level logging
+* Basic error handling
+* Inference timing hooks
+
+Future improvements:
+
+* Metrics dashboard (latency, success rate)
+* Centralized logging (ELK / OpenTelemetry)
+* Health monitoring
+
+---
+
+## ⚡ Features
+
+* User Authentication (Supabase)
+* Image Upload (user + clothing)
+* URL-based clothing input
+* AI Try-On Generation
+* Result comparison & download
+* History tracking
+* Modern UI (glassmorphism + dark mode)
+
+---
+
+## 🔌 API Endpoints
+
+| Method | Endpoint                     | Description       |
+| ------ | ---------------------------- | ----------------- |
+| POST   | `/api/auth/signup`           | Create account    |
+| POST   | `/api/auth/profile`          | Get profile       |
+| POST   | `/api/upload/user-image`     | Upload user image |
+| POST   | `/api/upload/clothing-image` | Upload clothing   |
+| POST   | `/api/upload/clothing-url`   | Fetch clothing    |
+| POST   | `/api/tryon/generate`        | Generate try-on   |
+| GET    | `/api/tryon/result/:id`      | Get result        |
+| GET    | `/api/tryon/history`         | Get history       |
+
+---
+
+## 📂 Project Structure
+
+```text
+virtual-tryon-system/
+├── frontend/       # Next.js app
+├── backend/        # Express API
+├── ai-service/     # Python ML service
+├── database/       # PostgreSQL schema
+└── docs/           # Documentation
+```
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer      | Technology                           |
+| ---------- | ------------------------------------ |
+| Frontend   | Next.js 14, TypeScript, Tailwind CSS |
+| Backend    | Node.js, Express.js                  |
+| AI Service | Python, Flask, PyTorch, OpenCV       |
+| Database   | Supabase PostgreSQL                  |
+| Auth       | Supabase Auth                        |
+| Storage    | Supabase Storage                     |
+
+---
+
+## 🚀 Deployment
+
+| Service    | Platform         |
+| ---------- | ---------------- |
+| Frontend   | Vercel           |
+| Backend    | Railway / Render |
+| AI Service | RunPod (GPU)     |
+| Database   | Supabase         |
+
+### Notes
+
+* AI service runs on GPU-enabled infrastructure
+* Backend is stateless → horizontally scalable
+* Frontend served via CDN (Vercel)
+
+---
+
+## 🧪 Local Development
 
 ### Prerequisites
 
-- Node.js 18+
-- Python 3.10+
-- A Supabase project (free tier works)
+* Node.js 18+
+* Python 3.10+
+* Supabase project
 
-### 1. Clone & Install
+### Setup
 
 ```bash
 # Frontend
-cd frontend
-npm install
-cp .env.example .env.local
-# Edit .env.local with your Supabase credentials
+cd frontend && npm install
 
 # Backend
-cd ../backend
-npm install
-cp .env.example .env
-# Edit .env with your Supabase credentials
+cd ../backend && npm install
 
 # AI Service
-cd ../ai-service
-pip install -r requirements.txt
+cd ../ai-service && pip install -r requirements.txt
 ```
 
-### 2. Set Up Supabase
-
-1. Create a project at [supabase.com](https://supabase.com)
-2. Go to SQL Editor → paste contents of `database/schema.sql` → Run
-3. Go to Storage → Create buckets: `user-photos`, `clothing-images`, `tryon-results`
-4. Set bucket policies to allow authenticated uploads/reads
-5. Copy your **Project URL** and **Anon Key** into `.env` files
-
-### 3. Run All Services
+### Run
 
 ```bash
-# Terminal 1 — AI Service (mock mode for development)
-cd ai-service
+# AI Service
 python app.py
 
-# Terminal 2 — Backend
-cd backend
+# Backend
 npm run dev
 
-# Terminal 3 — Frontend
-cd frontend
+# Frontend
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000)
+---
 
-## Project Structure
+## 🔮 Future Improvements
 
-```
-virtual-tryon-system/
-├── frontend/               # Next.js 14 App Router
-│   ├── src/app/            # Pages (landing, login, signup, dashboard, result, history)
-│   ├── src/components/     # UI components (auth, upload, tryon, layout)
-│   └── src/lib/            # Supabase client, API helpers, utils
-├── backend/                # Express.js REST API
-│   ├── server.js           # Entry point
-│   ├── routes/             # Upload, try-on, auth routes
-│   ├── middleware/         # JWT auth middleware
-│   └── services/           # Supabase & AI service clients
-├── ai-service/             # Python Flask AI microservice
-│   ├── app.py              # Flask app (mock/full mode)
-│   ├── inference.py        # Full AI pipeline orchestrator
-│   ├── mock_service.py     # Mock pipeline (CPU, no GPU needed)
-│   ├── models/             # Pose, parsing, extraction, warping, synthesis
-│   └── utils/              # Image preprocessing utilities
-├── database/
-│   └── schema.sql          # Supabase PostgreSQL schema
-└── docs/                   # API, architecture, deployment docs
-```
+* Async inference queue (Redis / Celery)
+* Model optimization (ONNX / TensorRT)
+* Multi-garment try-on
+* Real-time try-on (video)
+* Recommendation system
 
-## Features
+---
 
-- **User Auth** — Sign up, login, logout via Supabase Auth
-- **Photo Upload** — Drag-and-drop with preview
-- **Clothing Input** — Upload image or paste product URL
-- **AI Try-On** — Pose detection → segmentation → warping → synthesis
-- **Results** — Side-by-side comparison with download
-- **History** — View all past try-on generations
-- **Dark Theme** — Premium glassmorphism UI with gradients & animations
+## 📌 Summary
 
-## API Endpoints
+This project demonstrates:
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/signup` | Create new account |
-| POST | `/api/auth/profile` | Get user profile |
-| POST | `/api/upload/user-image` | Upload user photo |
-| POST | `/api/upload/clothing-image` | Upload clothing image |
-| POST | `/api/upload/clothing-url` | Fetch clothing from URL |
-| POST | `/api/tryon/generate` | Generate virtual try-on |
-| GET | `/api/tryon/result/:id` | Get specific result |
-| GET | `/api/tryon/history` | Get user's history |
+* Microservices-based system design
+* End-to-end ML pipeline integration
+* Full-stack engineering
+* Practical system tradeoffs
 
-## Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| Frontend | Next.js 14, TypeScript, Tailwind CSS |
-| Backend | Node.js, Express.js |
-| AI Service | Python, Flask, PyTorch, OpenCV |
-| Database | Supabase PostgreSQL |
-| Auth | Supabase Auth |
-| Storage | Supabase Storage |
-
-## Deployment
-
-| Service | Platform |
-|---------|----------|
-| Frontend | Vercel |
-| Backend | Railway / Render |
-| AI Service | RunPod / GPU server |
-| Database | Supabase |
-
-
+Designed as a **foundation for scalable AI-powered fashion systems**.
