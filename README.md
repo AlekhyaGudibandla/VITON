@@ -1,7 +1,7 @@
-# AI-Powered Virtual Try-On System
+# 👗 AI-Powered Virtual Try-On System (VirtualFit)
 
-> A full-stack, microservices-based AI system for virtual clothing try-on.
-> Upload a photo, select a garment, and generate a realistic try-on using a multi-stage computer vision pipeline.
+> A microservices-based AI system that enables users to virtually try on clothing using computer vision.
+> Built with a modular ML pipeline, scalable backend architecture, and production-oriented full-stack design.
 
 ![VirtualFit](https://img.shields.io/badge/VirtualFit-AI%20Fashion-7c3aed?style=for-the-badge)
 ![Next.js](https://img.shields.io/badge/Next.js-14-black?style=flat-square\&logo=next.js)
@@ -11,27 +11,36 @@
 
 ---
 
-## 🚀 Overview
+## 🚀 Vision
 
-This project implements an **end-to-end virtual try-on system** combining:
+VirtualFit is built to bridge the gap between **online shopping and real-world fitting**.
 
-* Modern full-stack architecture
-* A modular AI inference pipeline
-* Cloud-based storage and authentication
+It addresses a key problem in fashion e-commerce:
 
-The system is designed to be **extensible, modular, and production-oriented**, with clear separation between frontend, API, and ML inference services.
+> ❝ Users cannot visualize how clothing will look on them before purchase ❞
+
+This system uses **AI-powered image synthesis** to simulate realistic try-on experiences while maintaining a scalable and modular architecture.
 
 ---
 
-## 🏗️ Architecture
+## 🧠 Core Capabilities
+
+* 👤 Upload user image
+* 👕 Input clothing (image or URL)
+* 🤖 Generate AI-based try-on result
+* 📊 Store and retrieve past generations
+* 🔐 Secure user authentication
+
+---
+
+## 🏗️ System Architecture
 
 ```text
 ┌──────────────────┐    ┌──────────────────┐    ┌──────────────────┐
-│   Next.js 14     │    │   Express.js     │    │   Python Flask   │
-│   Frontend       │───▶│   Backend API    │───▶│   AI Service     │
+│   Next.js 14     │    │   Express API    │    │   Python AI      │
+│   Frontend       │───▶│   Backend        │───▶│   Service        │
 │   (Port 3000)    │    │   (Port 3001)    │    │   (Port 5000)    │
 └──────────────────┘    └──────────────────┘    └──────────────────┘
-        │                       │
         │                       │
         ▼                       ▼
 ┌──────────────────────────────────────────┐
@@ -40,102 +49,124 @@ The system is designed to be **extensible, modular, and production-oriented**, w
 └──────────────────────────────────────────┘
 ```
 
-### Key Design Decisions
+### 🔑 Design Principles
 
-* **Service separation**
+* **Separation of concerns**
 
-  * Frontend (UI)
-  * Backend (API orchestration)
-  * AI service (compute-heavy inference)
+  * UI → Next.js
+  * API → Express
+  * ML → Python service
 
-* **Language specialization**
+* **Stateless backend**
 
-  * Node.js → API handling & integrations
-  * Python → ML inference pipeline
+  * All persistence handled via Supabase
 
-* **Externalized state**
+* **Modular ML pipeline**
 
-  * Supabase handles auth, DB, and storage
+  * Independent stages → easier debugging & upgrades
 
 ---
 
 ## 🤖 AI Pipeline
 
 ```text
-User Photo ─┐
+User Image ─┐
              ├──▶ Pose Detection ──▶ Human Parsing ──┐
-Clothing ────┤                                        ├──▶ Image Synthesis ──▶ Result
+Clothing ────┤                                        ├──▶ Image Synthesis ──▶ Output
              └──▶ Clothing Mask ──▶ TPS Warping ─────┘
 ```
 
-### Pipeline Stages
+### 🧩 Pipeline Breakdown
 
-1. Pose Detection
-2. Human Parsing
-3. Clothing Mask Extraction
-4. TPS Warping
-5. Image Synthesis
+1. **Pose Detection**
+   Extracts body keypoints
 
-### Engineering Notes
+2. **Human Parsing**
+   Segments body regions
 
-* Modular pipeline (`models/`, `utils/`, `inference.py`)
-* Supports:
+3. **Clothing Mask Extraction**
+   Isolates garment from input
 
-  * **Mock mode (CPU)** → fast development
-  * **Full mode (GPU-ready)** → realistic inference
+4. **TPS Warping**
+   Aligns clothing to user body
 
----
-
-## ⚙️ System Design Considerations
-
-### Current Design
-
-* Synchronous request-response pipeline
-* Stateless backend API
-* External storage (Supabase)
-
-### Scalability Considerations
-
-* Async job queue (Redis / workers)
-* Request batching for GPU efficiency
-* Caching repeated results
-* Horizontal scaling of AI service
-
-### Tradeoffs
-
-| Decision              | Benefit              | Tradeoff            |
-| --------------------- | -------------------- | ------------------- |
-| Separate AI service   | Isolation of compute | Network latency     |
-| Supabase              | Faster development   | Less infra control  |
-| Synchronous inference | Simplicity           | Limited scalability |
+5. **Image Synthesis**
+   Generates final realistic output
 
 ---
 
-## 📊 Observability
+## ⚙️ System Design
 
-Currently supports:
+### Current Flow
+
+```text
+User → Upload → Backend → AI Service → Storage → Response
+```
+
+### Key Engineering Decisions
+
+* **Dedicated AI microservice**
+
+  * isolates heavy computation
+  * allows independent scaling
+
+* **Supabase integration**
+
+  * handles auth, DB, storage
+  * reduces backend complexity
+
+* **Mock vs Full Mode**
+
+  * mock mode → fast local development
+  * full mode → GPU-ready inference
+
+---
+
+## 📊 Performance Considerations
+
+* Inference is **compute-intensive** (GPU recommended)
+* Mock mode enables **sub-second development testing**
+* Designed for future:
+
+  * batching
+  * async processing
+  * GPU scaling
+
+---
+
+## ⚖️ Tradeoffs
+
+| Decision            | Benefit            | Tradeoff                   |
+| ------------------- | ------------------ | -------------------------- |
+| Separate AI service | Clean architecture | Network overhead           |
+| Sync inference      | Simpler pipeline   | Not scalable for high load |
+| Supabase            | Fast dev           | Less infra control         |
+
+---
+
+## 📊 Observability (Extendable)
 
 * API-level logging
-* Basic error handling
-* Inference timing hooks
+* Error handling across services
+* Hooks for inference timing
 
-Future improvements:
+Future scope:
 
-* Metrics dashboard (latency, success rate)
-* Centralized logging (ELK / OpenTelemetry)
-* Health monitoring
+* metrics dashboard
+* centralized logging
+* health monitoring
 
 ---
 
 ## ⚡ Features
 
-* User Authentication (Supabase)
-* Image Upload (user + clothing)
+* Authentication (Supabase)
+* Image upload (user + clothing)
 * URL-based clothing input
-* AI Try-On Generation
+* AI try-on generation
 * Result comparison & download
 * History tracking
-* Modern UI (glassmorphism + dark mode)
+* Modern UI (dark theme + glassmorphism)
 
 ---
 
@@ -169,14 +200,14 @@ virtual-tryon-system/
 
 ## 🛠️ Tech Stack
 
-| Layer      | Technology                           |
-| ---------- | ------------------------------------ |
-| Frontend   | Next.js 14, TypeScript, Tailwind CSS |
-| Backend    | Node.js, Express.js                  |
-| AI Service | Python, Flask, PyTorch, OpenCV       |
-| Database   | Supabase PostgreSQL                  |
-| Auth       | Supabase Auth                        |
-| Storage    | Supabase Storage                     |
+| Layer      | Technology                       |
+| ---------- | -------------------------------- |
+| Frontend   | Next.js 14, TypeScript, Tailwind |
+| Backend    | Node.js, Express                 |
+| AI Service | Python, Flask, PyTorch, OpenCV   |
+| Database   | Supabase PostgreSQL              |
+| Auth       | Supabase Auth                    |
+| Storage    | Supabase Storage                 |
 
 ---
 
@@ -189,15 +220,9 @@ virtual-tryon-system/
 | AI Service | RunPod (GPU)     |
 | Database   | Supabase         |
 
-### Notes
-
-* AI service runs on GPU-enabled infrastructure
-* Backend is stateless → horizontally scalable
-* Frontend served via CDN (Vercel)
-
 ---
 
-## 🧪 Local Development
+## 🧪 Local Setup
 
 ### Prerequisites
 
@@ -205,16 +230,11 @@ virtual-tryon-system/
 * Python 3.10+
 * Supabase project
 
-### Setup
+### Install
 
 ```bash
-# Frontend
 cd frontend && npm install
-
-# Backend
 cd ../backend && npm install
-
-# AI Service
 cd ../ai-service && pip install -r requirements.txt
 ```
 
@@ -233,7 +253,16 @@ npm run dev
 
 ---
 
-## 🔮 Future Improvements
+## ⚠️ Limitations
+
+* Sensitive to complex poses
+* Output quality depends on input image
+* Not real-time (yet)
+* Limited garment types
+
+---
+
+## 🔮 Roadmap
 
 * Async inference queue (Redis / Celery)
 * Model optimization (ONNX / TensorRT)
@@ -247,9 +276,9 @@ npm run dev
 
 This project demonstrates:
 
-* Microservices-based system design
-* End-to-end ML pipeline integration
+* Microservices-based architecture
+* AI pipeline integration
 * Full-stack engineering
-* Practical system tradeoffs
+* System design tradeoffs
 
-Designed as a **foundation for scalable AI-powered fashion systems**.
+Designed as a **foundation for scalable AI-driven fashion applications**.
