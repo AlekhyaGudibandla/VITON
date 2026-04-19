@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useAuth } from './AuthProvider';
-import { Eye, EyeOff, Mail, Lock, User, Sparkles } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, Sparkles, ArrowRight } from 'lucide-react';
 
 type AuthFormProps = {
   mode: 'login' | 'signup';
@@ -40,82 +40,99 @@ export default function AuthForm({ mode, onToggleMode }: AuthFormProps) {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto">
-      <div className="glass rounded-2xl p-8 shadow-2xl">
+    <div className="w-full max-w-md mx-auto page-transition">
+      <div className="bg-white rounded-3xl-soft p-10 shadow-soft border border-border/50 relative overflow-hidden">
+        {/* Background decorative element */}
+        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+        
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-4">
-            <Sparkles className="w-4 h-4 text-primary-light" />
-            <span className="text-sm text-primary-light font-medium">AI-Powered</span>
+        <div className="text-center mb-10 relative z-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary text-primary text-[10px] font-bold uppercase tracking-widest mb-4">
+             Join the Future
           </div>
-          <h2 className="text-3xl font-bold gradient-text mb-2">
-            {mode === 'login' ? 'Welcome Back' : 'Create Account'}
+          <h2 className="text-4xl font-bold tracking-tight mb-3">
+            {mode === 'login' ? 'Welcome ' : 'Create '} 
+            <span className="text-primary italic">{mode === 'login' ? 'Back' : 'Account'}</span>
           </h2>
-          <p className="text-muted">
+          <p className="text-muted font-medium text-sm">
             {mode === 'login'
-              ? 'Sign in to your virtual fitting room'
-              : 'Start your virtual try-on experience'}
+              ? 'Enter your credentials to access your studio'
+              : 'Sign up for your free virtual fitting room'}
           </p>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
           {mode === 'signup' && (
-            <div className="relative">
-              <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted" />
-              <input
-                id="fullName"
-                type="text"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                placeholder="Full Name"
-                className="w-full pl-12 pr-4 py-3.5 bg-background border border-border rounded-xl text-foreground placeholder-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all"
-              />
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-widest text-muted ml-1" htmlFor="fullName">Full Name</label>
+              <div className="relative">
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted/60" />
+                <input
+                  id="fullName"
+                  type="text"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="John Doe"
+                  className="w-full pl-12 pr-4 py-4 bg-secondary/30 border border-transparent rounded-xl-soft text-foreground placeholder:text-muted/50 focus:outline-none focus:bg-white focus:border-primary/30 focus:ring-4 focus:ring-primary/5 transition-all font-medium"
+                />
+              </div>
             </div>
           )}
 
-          <div className="relative">
-            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted" />
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email Address"
-              required
-              className="w-full pl-12 pr-4 py-3.5 bg-background border border-border rounded-xl text-foreground placeholder-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all"
-            />
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-widest text-muted ml-1" htmlFor="email">Email Address</label>
+            <div className="relative">
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted/60" />
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                required
+                className="w-full pl-12 pr-4 py-4 bg-secondary/30 border border-transparent rounded-xl-soft text-foreground placeholder:text-muted/50 focus:outline-none focus:bg-white focus:border-primary/30 focus:ring-4 focus:ring-primary/5 transition-all font-medium"
+              />
+            </div>
           </div>
 
-          <div className="relative">
-            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted" />
-            <input
-              id="password"
-              type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password"
-              required
-              minLength={6}
-              className="w-full pl-12 pr-12 py-3.5 bg-background border border-border rounded-xl text-foreground placeholder-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-muted hover:text-foreground transition-colors"
-            >
-              {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-            </button>
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-widest text-muted ml-1" htmlFor="password">Password</label>
+            <div className="relative">
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted/60" />
+              <input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onPaste={(e) => e.preventDefault()}
+                onCopy={(e) => e.preventDefault()}
+                onContextMenu={(e) => e.preventDefault()}
+                autoComplete="new-password"
+                spellCheck="false"
+                placeholder="••••••••"
+                required
+                minLength={6}
+                className="w-full pl-12 pr-12 py-4 bg-secondary/30 border border-transparent rounded-xl-soft text-foreground placeholder:text-muted/50 focus:outline-none focus:bg-white focus:border-primary/30 focus:ring-4 focus:ring-primary/5 transition-all font-medium"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-muted/60 hover:text-primary transition-colors"
+              >
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
+            </div>
           </div>
 
           {/* Error / Success messages */}
           {error && (
-            <div className="p-3 rounded-xl bg-danger/10 border border-danger/20 text-danger text-sm">
+            <div className="p-4 rounded-xl-soft bg-danger/5 border border-danger/10 text-danger text-xs font-bold animate-fadeIn">
               {error}
             </div>
           )}
           {success && (
-            <div className="p-3 rounded-xl bg-success/10 border border-success/20 text-success text-sm">
+            <div className="p-4 rounded-xl-soft bg-success/5 border border-success/10 text-success text-xs font-bold animate-fadeIn">
               {success}
             </div>
           )}
@@ -125,31 +142,28 @@ export default function AuthForm({ mode, onToggleMode }: AuthFormProps) {
             id="auth-submit"
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 rounded-xl font-semibold text-white bg-gradient-to-r from-primary to-secondary hover:from-primary-hover hover:to-secondary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 glow-hover shadow-lg"
+            className="w-full py-4.5 rounded-xl-soft font-bold text-white bg-primary hover:bg-primary-hover disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-300 shadow-glow flex items-center justify-center gap-2 group"
           >
             {loading ? (
-              <span className="flex items-center justify-center gap-2">
-                <svg className="w-5 h-5 animate-spin" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-                </svg>
-                {mode === 'login' ? 'Signing In...' : 'Creating Account...'}
-              </span>
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
             ) : (
-              mode === 'login' ? 'Sign In' : 'Create Account'
+              <>
+                {mode === 'login' ? 'Sign In' : 'Create Account'}
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </>
             )}
           </button>
         </form>
 
         {/* Toggle mode */}
-        <div className="mt-6 text-center">
-          <p className="text-muted">
-            {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
+        <div className="mt-8 text-center relative z-10">
+          <p className="text-sm text-muted font-medium">
+            {mode === 'login' ? "New to VirtualFit? " : 'Already a member? '}
             <button
               onClick={onToggleMode}
-              className="text-primary-light hover:text-primary font-medium transition-colors"
+              className="text-primary font-bold hover:underline decoration-2 underline-offset-4 transition-all"
             >
-              {mode === 'login' ? 'Sign Up' : 'Sign In'}
+              {mode === 'login' ? 'Create an account' : 'Sign in instead'}
             </button>
           </p>
         </div>

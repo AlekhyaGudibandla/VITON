@@ -71,7 +71,7 @@ export async function uploadClothingUrl(url: string) {
   return response.json();
 }
 
-export async function generateTryOn(userImageId: string, clothingImageId: string) {
+export async function generateTryOn(userImageId: string | null, clothingImageId: string, profileId?: string | null) {
   const headers = await getAuthHeaders();
 
   const response = await fetch(`${API_BASE}/tryon/generate`, {
@@ -80,7 +80,7 @@ export async function generateTryOn(userImageId: string, clothingImageId: string
       ...headers,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ userImageId, clothingImageId }),
+    body: JSON.stringify({ userImageId, clothingImageId, profileId }),
   });
 
   if (!response.ok) {
@@ -123,6 +123,69 @@ export async function getTryOnHistory() {
   return response.json();
 }
 
+// Profile methods
+export async function getProfiles() {
+  const headers = await getAuthHeaders();
+
+  const response = await fetch(`${API_BASE}/profiles`, {
+    method: 'GET',
+    headers,
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to fetch profiles');
+  }
+
+  return response.json();
+}
+
+export async function createProfile(name: string, file: File) {
+  const formData = new FormData();
+  formData.append('name', name);
+  formData.append('image', file);
+
+  const headers = await getAuthHeaders();
+
+  const response = await fetch(`${API_BASE}/profiles`, {
+    method: 'POST',
+    headers,
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to create profile');
+  }
+
+  return response.json();
+}
+
+export async function deleteProfile(id: string) {
+  const headers = await getAuthHeaders();
+
+  const response = await fetch(`${API_BASE}/profiles/${id}`, {
+    method: 'DELETE',
+    headers,
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to delete profile');
+  }
+
+  return response.json();
+}
+
+export type Profile = {
+  id: string;
+  user_id: string;
+  name: string;
+  storage_path: string;
+  url: string;
+  created_at: string;
+};
+
 export type ImageRecord = {
   id: string;
   user_id: string;
@@ -136,7 +199,8 @@ export type ImageRecord = {
 export type TryOnResult = {
   id: string;
   user_id: string;
-  user_image_id: string;
+  user_image_id: string | null;
+  profile_id: string | null;
   clothing_image_id: string;
   result_storage_path: string;
   status: 'pending' | 'processing' | 'completed' | 'failed';

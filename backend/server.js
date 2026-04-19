@@ -6,6 +6,7 @@ const uploadRoutes = require('./routes/upload');
 const tryonRoutes = require('./routes/tryon');
 const authRoutes = require('./routes/auth');
 const imageRoutes = require('./routes/images');
+const profileRoutes = require('./routes/profiles');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -29,6 +30,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/tryon', tryonRoutes);
 app.use('/api/images', imageRoutes);
+app.use('/api/profiles', profileRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

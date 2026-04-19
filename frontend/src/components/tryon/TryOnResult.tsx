@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { Download, RefreshCw, Clock, CheckCircle } from 'lucide-react';
+import { Download, RefreshCw, Clock, CheckCircle, Sparkles } from 'lucide-react';
 import { TryOnResult as TryOnResultType } from '@/lib/api';
 
 type TryOnResultProps = {
@@ -30,97 +30,122 @@ export default function TryOnResult({ result, onTryAnother }: TryOnResultProps) 
   };
 
   return (
-    <div className="page-transition space-y-8">
+    <div className="page-transition space-y-12">
       {/* Header */}
       <div className="text-center">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-success/10 border border-success/20 mb-4">
-          <CheckCircle className="w-4 h-4 text-success" />
-          <span className="text-sm text-success font-medium">Try-On Complete</span>
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase tracking-widest mb-4">
+           Ready to Wear
         </div>
-        <h2 className="text-3xl font-bold gradient-text mb-2">Your Virtual Try-On</h2>
+        <h2 className="text-4xl sm:text-5xl font-bold tracking-tight mb-4">
+          Your New <span className="text-primary italic">Style</span>
+        </h2>
         {result.processing_time_ms && (
-          <div className="flex items-center justify-center gap-1 text-sm text-muted">
-            <Clock className="w-3.5 h-3.5" />
-            <span>Generated in {(result.processing_time_ms / 1000).toFixed(1)}s</span>
+          <div className="flex items-center justify-center gap-2 text-sm text-muted font-medium">
+            <Clock className="w-4 h-4" />
+            <span>Generated in {(result.processing_time_ms / 1000).toFixed(1)} seconds</span>
           </div>
         )}
       </div>
 
-      {/* Image comparison */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* User image */}
-        <div className="glass rounded-2xl overflow-hidden">
-          <div className="p-4 border-b border-border">
-            <h3 className="text-sm font-semibold text-muted uppercase tracking-wider">Your Photo</h3>
-          </div>
-          <div className="aspect-[3/4] bg-card">
-            <img
-              src={result.user_image_url}
-              alt="Your photo"
-              className="w-full h-full object-cover"
-            />
-          </div>
-        </div>
-
-        {/* Clothing */}
-        <div className="glass rounded-2xl overflow-hidden">
-          <div className="p-4 border-b border-border">
-            <h3 className="text-sm font-semibold text-muted uppercase tracking-wider">Clothing</h3>
-          </div>
-          <div className="aspect-[3/4] bg-card">
-            <img
-              src={result.clothing_image_url}
-              alt="Clothing"
-              className="w-full h-full object-cover"
-            />
-          </div>
-        </div>
-
-        {/* Result */}
-        <div className="gradient-border rounded-2xl overflow-hidden">
-          <div className="glass rounded-2xl overflow-hidden">
-            <div className="p-4 border-b border-border bg-gradient-to-r from-primary/10 to-secondary/10">
-              <h3 className="text-sm font-semibold gradient-text uppercase tracking-wider">Try-On Result</h3>
+      {/* Image comparison grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        {/* Source images column */}
+        <div className="lg:col-span-4 space-y-6 order-2 lg:order-1">
+          <div className="bg-white p-4 rounded-2xl-soft shadow-soft border border-border/50">
+            <div className="flex items-center justify-between mb-3 px-2">
+               <span className="text-xs font-bold uppercase tracking-widest text-muted">Original</span>
+               <CheckCircle className="w-4 h-4 text-success" />
             </div>
-            <div className="aspect-[3/4] bg-card">
+            <div className="aspect-[3/4] rounded-xl overflow-hidden bg-secondary/30">
+              <img
+                src={result.user_image_url}
+                alt="Your photo"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+
+          <div className="bg-white p-4 rounded-2xl-soft shadow-soft border border-border/50">
+            <div className="flex items-center justify-between mb-3 px-2">
+               <span className="text-xs font-bold uppercase tracking-widest text-muted">Clothing</span>
+               <CheckCircle className="w-4 h-4 text-success" />
+            </div>
+            <div className="aspect-[3/4] rounded-xl overflow-hidden bg-secondary/30">
+              <img
+                src={result.clothing_image_url}
+                alt="Clothing"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Arrow / Connector (only visible on desktop) */}
+        <div className="hidden lg:flex lg:col-span-1 flex-col items-center justify-center gap-4 order-2">
+           <div className="w-10 h-10 rounded-full bg-secondary text-primary flex items-center justify-center">
+              <Sparkles className="w-5 h-5" />
+           </div>
+           <div className="h-24 w-px bg-gradient-to-b from-primary/30 to-transparent" />
+        </div>
+
+        {/* Result column */}
+        <div className="lg:col-span-7 order-1 lg:order-3">
+          <div className="bg-white p-6 rounded-3xl-soft shadow-glow border-2 border-primary/10 relative">
+            <div className="flex items-center justify-between mb-4 px-2">
+               <span className="text-sm font-bold uppercase tracking-widest text-primary">Final Result</span>
+               <div className="flex gap-2">
+                  <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                  <div className="w-2 h-2 rounded-full bg-primary/40" />
+                  <div className="w-2 h-2 rounded-full bg-primary/20" />
+               </div>
+            </div>
+            <div className="aspect-[3/4] rounded-2xl overflow-hidden bg-secondary/10">
               {result.result_url ? (
                 <img
                   src={result.result_url}
                   alt="Try-on result"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-muted">
-                  No result available
+                <div className="w-full h-full flex items-center justify-center text-muted italic font-medium">
+                  Generation in progress or failed
                 </div>
               )}
             </div>
+            
+            {/* Download Badge overlay */}
+            {result.result_url && (
+              <button 
+                onClick={handleDownload}
+                className="absolute bottom-10 right-10 w-14 h-14 rounded-full bg-primary text-white flex items-center justify-center shadow-glow hover:scale-110 active:scale-95 transition-all"
+                title="Download image"
+              >
+                <Download className="w-6 h-6" />
+              </button>
+            )}
           </div>
         </div>
       </div>
 
       {/* Actions */}
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-8">
         <button
-          id="download-result"
+          id="try-another"
+          onClick={onTryAnother}
+          className="w-full sm:w-auto flex items-center justify-center gap-3 px-10 py-5 rounded-2xl-soft font-bold text-lg text-foreground bg-white border border-border hover:border-primary/30 hover:bg-secondary transition-all shadow-soft"
+        >
+          <RefreshCw className="w-5 h-5" />
+          Try Another Outfit
+        </button>
+        
+        <button
           onClick={handleDownload}
           disabled={!result.result_url}
-          className="flex items-center gap-2 px-8 py-3.5 rounded-xl font-semibold text-white bg-gradient-to-r from-primary to-secondary hover:from-primary-hover hover:to-secondary/90 disabled:opacity-50 transition-all glow-hover shadow-lg"
+          className="w-full sm:w-auto flex items-center justify-center gap-3 px-12 py-5 rounded-2xl-soft font-bold text-lg text-white bg-primary hover:bg-primary-hover disabled:opacity-40 transition-all shadow-glow hover:scale-105 active:scale-95"
         >
           <Download className="w-5 h-5" />
-          Download Result
+          Save to Collection
         </button>
-
-        {onTryAnother && (
-          <button
-            id="try-another"
-            onClick={onTryAnother}
-            className="flex items-center gap-2 px-8 py-3.5 rounded-xl font-semibold text-foreground border border-border hover:border-primary/50 hover:bg-card transition-all"
-          >
-            <RefreshCw className="w-5 h-5" />
-            Try Another Outfit
-          </button>
-        )}
       </div>
     </div>
   );

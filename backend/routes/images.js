@@ -14,7 +14,7 @@ router.get('/:bucket/:userId/:fileName', async (req, res) => {
     const { bucket, userId, fileName } = req.params;
 
     // Validate bucket name
-    const allowedBuckets = ['user-photos', 'clothing-images', 'tryon-results'];
+    const allowedBuckets = ['user-photos', 'clothing-images', 'tryon-results', 'profiles'];
     if (!allowedBuckets.includes(bucket)) {
       return res.status(400).json({ error: 'Invalid bucket' });
     }

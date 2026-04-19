@@ -25,7 +25,7 @@ This system uses **AI-powered image synthesis** to simulate realistic try-on exp
 
 ## 🧠 Core Capabilities
 
-* 👤 Upload user image
+* 👤 Multi-profile management (save and reuse user models)
 * 👕 Input clothing (image or URL)
 * 🤖 Generate AI-based try-on result
 * 📊 Store and retrieve past generations
@@ -161,6 +161,7 @@ Future scope:
 ## ⚡ Features
 
 * Authentication (Supabase)
+* Identity Manager (save and reuse user models)
 * Image upload (user + clothing)
 * URL-based clothing input
 * AI try-on generation
@@ -172,16 +173,19 @@ Future scope:
 
 ## 🔌 API Endpoints
 
-| Method | Endpoint                     | Description       |
-| ------ | ---------------------------- | ----------------- |
-| POST   | `/api/auth/signup`           | Create account    |
-| POST   | `/api/auth/profile`          | Get profile       |
-| POST   | `/api/upload/user-image`     | Upload user image |
-| POST   | `/api/upload/clothing-image` | Upload clothing   |
-| POST   | `/api/upload/clothing-url`   | Fetch clothing    |
-| POST   | `/api/tryon/generate`        | Generate try-on   |
-| GET    | `/api/tryon/result/:id`      | Get result        |
-| GET    | `/api/tryon/history`         | Get history       |
+| Method | Endpoint                     | Description        |
+| ------ | ---------------------------- | ------------------ |
+| POST   | `/api/auth/signup`           | Create account     |
+| POST   | `/api/auth/profile`          | Get profile        |
+| GET    | `/api/profiles`              | List user profiles |
+| POST   | `/api/profiles`              | Create new profile |
+| DELETE | `/api/profiles/:id`          | Delete profile     |
+| POST   | `/api/upload/user-image`     | Upload user image  |
+| POST   | `/api/upload/clothing-image` | Upload clothing    |
+| POST   | `/api/upload/clothing-url`   | Fetch clothing     |
+| POST   | `/api/tryon/generate`        | Generate try-on    |
+| GET    | `/api/tryon/result/:id`      | Get result         |
+| GET    | `/api/tryon/history`         | Get history        |
 
 ---
 

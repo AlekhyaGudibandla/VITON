@@ -16,19 +16,30 @@ const { supabase } = require('../services/supabaseService');
 // POST /api/tryon/generate
 router.post('/generate', authMiddleware, async (req, res) => {
   try {
-    const { userImageId, clothingImageId } = req.body;
+    const { userImageId, clothingImageId, profileId } = req.body;
     const userId = req.user.id;
 
-    if (!userImageId || !clothingImageId) {
-      return res.status(400).json({ error: 'User image ID and clothing image ID are required' });
+    if ((!userImageId && !profileId) || !clothingImageId) {
+      return res.status(400).json({ error: 'Profile or User image ID, and clothing image ID are required' });
     }
 
-    // Get image records
-    const userImage = await getRecord('images', userImageId);
+    let userImage;
+    let userBucket = 'user-photos';
+
+    if (profileId) {
+      // Get from profiles table
+      userImage = await getRecord('profiles', profileId);
+      userBucket = 'profiles';
+    } else {
+      // Get from images table (old way)
+      userImage = await getRecord('images', userImageId);
+      userBucket = 'user-photos';
+    }
+
     const clothingImage = await getRecord('images', clothingImageId);
 
     if (!userImage || userImage.user_id !== userId) {
-      return res.status(404).json({ error: 'User image not found' });
+      return res.status(404).json({ error: 'Base image/profile not found' });
     }
     if (!clothingImage || clothingImage.user_id !== userId) {
       return res.status(404).json({ error: 'Clothing image not found' });
@@ -37,7 +48,8 @@ router.post('/generate', authMiddleware, async (req, res) => {
     // Create try-on request record
     const tryonRecord = await insertRecord('tryon_requests', {
       user_id: userId,
-      user_image_id: userImageId,
+      user_image_id: userImageId || null,
+      profile_id: profileId || null,
       clothing_image_id: clothingImageId,
       status: 'processing'
     });
@@ -47,10 +59,10 @@ router.post('/generate', authMiddleware, async (req, res) => {
     try {
       // Download images from Supabase Storage
       const { data: userImgData, error: userDlErr } = await supabase.storage
-        .from('user-photos')
+        .from(userBucket)
         .download(userImage.storage_path);
 
-      if (userDlErr) throw new Error(`Failed to download user image: ${userDlErr.message}`);
+      if (userDlErr) throw new Error(`Failed to download base image: ${userDlErr.message}`);
 
       const { data: clothingImgData, error: clothDlErr } = await supabase.storage
         .from('clothing-images')
@@ -79,7 +91,7 @@ router.post('/generate', authMiddleware, async (req, res) => {
       });
 
       // Get image URLs
-      const userImageUrl = getProxyUrl('user-photos', userImage.storage_path);
+      const userImageUrl = getProxyUrl(userBucket, userImage.storage_path);
       const clothingImageUrl = getProxyUrl('clothing-images', clothingImage.storage_path);
 
       res.json({
@@ -146,12 +158,16 @@ router.get('/history', authMiddleware, async (req, res) => {
     const results = await Promise.all(
       records.map(async (record) => {
         try {
-          const userImage = await getRecord('images', record.user_image_id);
           const clothingImage = await getRecord('images', record.clothing_image_id);
 
-          const userImageUrl = userImage
-            ? getProxyUrl('user-photos', userImage.storage_path)
-            : null;
+          let userImageUrl = null;
+          if (record.profile_id) {
+            const profile = await getRecord('profiles', record.profile_id);
+            if (profile) userImageUrl = getProxyUrl('profiles', profile.storage_path);
+          } else if (record.user_image_id) {
+            const userImage = await getRecord('images', record.user_image_id);
+            if (userImage) userImageUrl = getProxyUrl('user-photos', userImage.storage_path);
+          }
           const clothingImageUrl = clothingImage
             ? getProxyUrl('clothing-images', clothingImage.storage_path)
             : null;

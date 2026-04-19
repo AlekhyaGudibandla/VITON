@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import ImageUploader from './ImageUploader';
-import { Link, Globe } from 'lucide-react';
+import { Link, Globe, X, ArrowRight } from 'lucide-react';
 
 type ClothingInputProps = {
   onFileSelect: (file: File) => void;
@@ -35,86 +35,100 @@ export default function ClothingInput({
   };
 
   return (
-    <div className="space-y-4">
-      {/* Mode toggle */}
-      <div className="flex rounded-xl overflow-hidden border border-border bg-card">
+    <div className="space-y-6">
+      {/* Mode toggle - Segmented Control style */}
+      <div className="flex p-1.5 rounded-2xl-soft bg-secondary/50 border border-primary/5">
         <button
           onClick={() => setInputMode('upload')}
-          className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-all ${
+          className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl-soft text-sm font-bold transition-all duration-300 ${
             inputMode === 'upload'
-              ? 'bg-primary/20 text-primary-light border-r border-primary/30'
-              : 'text-muted hover:text-foreground hover:bg-card-hover border-r border-border'
+              ? 'bg-white text-primary shadow-soft'
+              : 'text-muted hover:text-foreground hover:bg-white/40'
           }`}
         >
           <Link className="w-4 h-4" />
-          Upload Image
+          File Upload
         </button>
         <button
           onClick={() => setInputMode('url')}
-          className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-all ${
+          className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl-soft text-sm font-bold transition-all duration-300 ${
             inputMode === 'url'
-              ? 'bg-primary/20 text-primary-light'
-              : 'text-muted hover:text-foreground hover:bg-card-hover'
+              ? 'bg-white text-primary shadow-soft'
+              : 'text-muted hover:text-foreground hover:bg-white/40'
           }`}
         >
           <Globe className="w-4 h-4" />
-          Paste URL
+          Product URL
         </button>
       </div>
 
       {/* Content */}
-      {inputMode === 'upload' ? (
-        <ImageUploader
-          id="clothing-uploader"
-          label="Clothing Image"
-          description="Upload a shirt, jacket, or top image with clear background"
-          onFileSelect={onFileSelect}
-          preview={preview}
-          onClear={onClear}
-          loading={loading}
-        />
-      ) : (
-        <div className="space-y-3">
-          {preview ? (
-            <div className="relative group rounded-2xl overflow-hidden border border-border bg-card">
-              <img src={preview} alt="Clothing" className="w-full h-64 object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-                <div className="absolute bottom-4 right-4">
+      <div className="page-transition">
+        {inputMode === 'upload' ? (
+          <ImageUploader
+            id="clothing-uploader"
+            label="Clothing Image"
+            description="Upload a shirt, jacket, or top with a clear background"
+            onFileSelect={onFileSelect}
+            preview={preview}
+            onClear={onClear}
+            loading={loading}
+          />
+        ) : (
+          <div className="space-y-4">
+            {preview ? (
+              <div className="relative group rounded-2xl-soft overflow-hidden bg-white shadow-soft border border-border/50">
+                <img src={preview} alt="Clothing" className="w-full h-80 object-cover" />
+                <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
                   {onClear && (
                     <button
                       onClick={onClear}
-                      className="p-2 rounded-full bg-white/20 hover:bg-white/30 text-white transition-colors"
+                      className="w-12 h-12 rounded-full bg-white text-danger flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
                     >
-                      ✕
+                      <X className="w-5 h-5" />
                     </button>
                   )}
                 </div>
               </div>
-            </div>
-          ) : (
-            <form onSubmit={handleUrlSubmit} className="space-y-3">
-              <div className="relative">
-                <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted" />
-                <input
-                  id="clothing-url"
-                  type="url"
-                  value={url}
-                  onChange={(e) => setUrl(e.target.value)}
-                  placeholder="Paste clothing product URL..."
-                  className="w-full pl-12 pr-4 py-3.5 bg-background border border-border rounded-xl text-foreground placeholder-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all"
-                />
+            ) : (
+              <div className="bg-white p-8 rounded-2xl-soft shadow-soft border border-border/50">
+                <div className="w-16 h-16 rounded-2xl bg-secondary text-primary flex items-center justify-center mb-6 shadow-sm">
+                   <Globe className="w-8 h-8" />
+                </div>
+                <h3 className="text-xl font-bold text-foreground mb-2">Import from URL</h3>
+                <p className="text-sm text-muted mb-8 font-medium">Paste a direct link to a clothing item from any online store.</p>
+                
+                <form onSubmit={handleUrlSubmit} className="space-y-4">
+                  <div className="relative">
+                    <input
+                      id="clothing-url"
+                      type="url"
+                      value={url}
+                      onChange={(e) => setUrl(e.target.value)}
+                      placeholder="https://store.com/product/image.jpg"
+                      className="w-full pl-6 pr-6 py-4 bg-secondary/30 border border-transparent rounded-xl-soft text-foreground placeholder:text-muted/60 focus:outline-none focus:bg-white focus:border-primary/30 focus:ring-4 focus:ring-primary/5 transition-all font-medium"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={!url.trim() || urlLoading}
+                    className="w-full py-4 rounded-xl-soft font-bold text-white bg-primary hover:bg-primary-hover disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-glow flex items-center justify-center gap-2 group"
+                  >
+                    {urlLoading ? (
+                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    ) : (
+                       <>
+                        Fetch Item
+                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                       </>
+                    )}
+                  </button>
+                </form>
               </div>
-              <button
-                type="submit"
-                disabled={!url.trim() || urlLoading}
-                className="w-full py-3 rounded-xl font-medium text-white bg-gradient-to-r from-primary to-secondary hover:from-primary-hover hover:to-secondary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-              >
-                {urlLoading ? 'Fetching Image...' : 'Fetch Clothing Image'}
-              </button>
-            </form>
-          )}
-        </div>
-      )}
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
